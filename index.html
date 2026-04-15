@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Freckle+Face&family=Tiny5&family=Alex+Brush&family=Caveat:wght@400;700&family=Lobster&family=Montserrat:wght@400;700;900&family=Noto+Sans+SC:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-<title>PhotoDate</title>
+<title>photodate</title>
 <style>
 * {
   margin: 0;
@@ -228,7 +228,7 @@ button:active {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-bottom: 6px solid #a0aec0;
+  border-bottom: 6px solid #a0ec0;
   transition: border-color 0.2s ease;
 }
 .input-btn.down::after {
@@ -238,7 +238,7 @@ button:active {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 6px solid #a0aec0;
+  border-top: 6px solid #a0ec0;
   transition: border-color 0.2s ease;
 }
 .input-btn.up:hover::after {
@@ -269,7 +269,7 @@ button:active {
 <body>
 <div class="app">
   <div class="sidebar">
-    <h2>日历生成器</h2>
+    <h2>Lens Calendar</h2>
 
     <!-- 1. 基础区 -->
     <div class="section">
@@ -316,13 +316,11 @@ button:active {
           
           <label>字体</label>
           <select id="monthFontFamily">
-            <!-- 中英文通用在前 -->
             <option value="Montserrat, sans-serif">极简</option>
             <option value="Oswald, sans-serif">摩登</option>
             <option value="Playfair Display, serif">优雅</option>
             <option value="Lobster, cursive">活泼</option>
             <option value="Caveat, cursive">手写</option>
-            <!-- 仅限英文在后 + (英) -->
             <option value="Pirata One, system-ui">复古（英）</option>
             <option value="Freckle Face, system-ui">涂鸦（英）</option>
             <option value="Tiny5, sans-serif">像素（英）</option>
@@ -337,7 +335,7 @@ button:active {
       </div>
     </div>
 
-    <!-- 3. 日期区（已补齐 9 种字体，和月份完全一致） -->
+    <!-- 3. 日期区 -->
     <div class="main-section">
       <div class="collapsible-section-title" data-target="date-style-content">
         日期
@@ -356,13 +354,11 @@ button:active {
           
           <label>字体</label>
           <select id="dateFontFamily">
-            <!-- 中英文通用在前 -->
             <option value="Montserrat, sans-serif">极简</option>
             <option value="Oswald, sans-serif">摩登</option>
             <option value="Playfair Display, serif">优雅</option>
             <option value="Lobster, cursive">活泼</option>
             <option value="Caveat, cursive">手写</option>
-            <!-- 仅限英文在后 + (英) -->
             <option value="Pirata One, system-ui">复古（英）</option>
             <option value="Freckle Face, system-ui">涂鸦（英）</option>
             <option value="Tiny5, sans-serif">像素（英）</option>
@@ -665,12 +661,13 @@ canvas.addEventListener('mousedown', (e) => {
   }
 });
 
+// ========== BUG 修复在这里！！！ ==========
 canvas.addEventListener('mousemove', function(e) {
   if (!currentImage) return;
   e.preventDefault();
   const r = canvas.getBoundingClientRect();
   const moveX = e.clientX - r.left;
-  const moveY = e.clientY - r.left;
+  const moveY = e.clientY - r.top; // 这里修复了！
 
   if (dragCalendar) {
     calendarX = moveX - calendarOffsetX;
