@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Freckle+Face&family=Tiny5&family=Alex+Brush&family=Caveat:wght@400;700&family=Lobster&family=Montserrat:wght@400;700;900&family=Noto+Sans+SC:wght@400;700&family=Oswald:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Freckle+Face&Tiny5&Alex+Brush&Caveat:wght@400;700&Lobster&Montserrat:wght@400;700;900&Noto+Sans+SC:wght@400;700&Oswald:wght@400;700&Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 <title>Photodate</title>
 <style>
 * {
@@ -69,14 +69,13 @@ html, body {
   flex-direction: column;
   gap: 10px;
   transition: max-height 0.3s ease, opacity 0.3s ease;
-  max-height: 2000px;
-  opacity: 1;
-  overflow: hidden;
-}
-.collapsible-content.collapsed {
   max-height: 0;
   opacity: 0;
-  margin-bottom: -8px;
+  overflow: hidden;
+}
+.collapsible-content:not(.collapsed) {
+  max-height: 2000px;
+  opacity: 1;
 }
 .main-section {
   display: flex;
@@ -159,6 +158,13 @@ button {
   background: white;
   box-shadow: 0 4px 15px rgba(0,0,0,0.05);
   touch-action: none;
+  cursor: default;
+}
+#canvas.draggable {
+  cursor: grab;
+}
+#canvas.dragging {
+  cursor: grabbing;
 }
 .row {
   display: flex;
@@ -232,7 +238,7 @@ button {
     <div class="section">
       <label>年</label>
       <div class="number-input-wrap">
-        <input type="number" id="year" class="number-input" value="2026" min="1900" max="2100">
+        <input type="number" id="year" class="number-input" min="1900" max="2100">
         <div class="input-btn-group">
           <button class="input-btn up" id="yearUp"></button>
           <button class="input-btn down" id="yearDown"></button>
@@ -241,7 +247,7 @@ button {
       
       <label>月</label>
       <div class="number-input-wrap">
-        <input type="number" id="month" class="number-input" value="4" min="1" max="12">
+        <input type="number" id="month" class="number-input" min="1" max="12">
         <div class="input-btn-group">
           <button class="input-btn up" id="monthUp"></button>
           <button class="input-btn down" id="monthDown"></button>
@@ -250,11 +256,13 @@ button {
     </div>
 
     <div class="main-section">
-      <div class="collapsible-section-title" data-target="month-style-content">月份 <span class="collapsible-arrow">▶</span></div>
-      <div id="month-style-content" class="collapsible-content">
+      <div class="collapsible-section-title" data-target="month-style-content">
+        月份 <span class="collapsible-arrow collapsed">▶</span>
+      </div>
+      <div id="month-style-content" class="collapsible-content collapsed">
         <div class="section">
-          <label>文字</label><input type="text" id="monthText" value="四月">
-          <label>大小</label><input type="range" id="monthFontSize" min="20" max="500" value="120">
+          <label>文字</label><input type="text" id="monthText">
+          <label>大小</label><input type="range" id="monthFontSize" min="20" max="500" value="40">
           <label>字间距</label><input type="range" id="monthLetterSpacing" min="0" max="150" value="0">
           <label>颜色</label><input type="color" id="monthTextColor" value="#000000">
           <label>方向</label>
@@ -264,11 +272,15 @@ button {
           </select>
           <label>字体</label>
           <select id="monthFontFamily">
-            <option value="Montserrat">极简</option>
-            <option value="Oswald">摩登</option>
-            <option value="Playfair Display">优雅</option>
-            <option value="Lobster">活泼</option>
-            <option value="Caveat">手写</option>
+            <option value="Montserrat, sans-serif">极简（中英）</option>
+            <option value="Oswald, sans-serif">摩登（中英）</option>
+            <option value="Playfair Display, serif">优雅（中英）</option>
+            <option value="Lobster, cursive">活泼（中英）</option>
+            <option value="Caveat, cursive">手写（中英）</option>
+            <option value="Pirata One, system-ui">复古（仅英文）</option>
+            <option value="Freckle Face, system-ui">可爱（仅英文）</option>
+            <option value="Tiny5, sans-serif">像素（仅英文）</option>
+            <option value="Alex Brush, cursive">花体（仅英文）</option>
           </select>
           <div class="sub-section">
             <label><input type="checkbox" id="monthBold" checked> 加粗</label>
@@ -279,20 +291,26 @@ button {
     </div>
 
     <div class="main-section">
-      <div class="collapsible-section-title" data-target="date-style-content">日期 <span class="collapsible-arrow">▶</span></div>
-      <div id="date-style-content" class="collapsible-content">
+      <div class="collapsible-section-title" data-target="date-style-content">
+        日期 <span class="collapsible-arrow collapsed">▶</span>
+      </div>
+      <div id="date-style-content" class="collapsible-content collapsed">
         <div class="section">
           <label>大小</label><input type="range" id="dateFontSize" min="20" max="200" value="60">
-          <label>列间距</label><input type="range" id="letterSpacing" min="0" max="120" value="20">
-          <label>行间距</label><input type="range" id="lineHeight" min="20" max="240" value="90">
+          <label>列间距</label><input type="range" id="letterSpacing" min="0" max="120" value="10">
+          <label>行间距</label><input type="range" id="lineHeight" min="15" max="240" value="90">
           <label>颜色</label><input type="color" id="dateTextColor" value="#000000">
           <label>字体</label>
           <select id="dateFontFamily">
-            <option value="Montserrat">极简</option>
-            <option value="Oswald">摩登</option>
-            <option value="Playfair Display">优雅</option>
-            <option value="Lobster">活泼</option>
-            <option value="Caveat">手写</option>
+            <option value="Montserrat, sans-serif">极简（中英）</option>
+            <option value="Oswald, sans-serif">摩登（中英）</option>
+            <option value="Playfair Display, serif">优雅（中英）</option>
+            <option value="Lobster, cursive">活泼（中英）</option>
+            <option value="Caveat, cursive">手写（中英）</option>
+            <option value="Pirata One, system-ui">复古（仅英文）</option>
+            <option value="Freckle Face, system-ui">可爱（仅英文）</option>
+            <option value="Tiny5, sans-serif">像素（仅英文）</option>
+            <option value="Alex Brush, cursive">花体（仅英文）</option>
           </select>
           <div class="sub-section">
             <label><input type="checkbox" id="dateBold" checked> 加粗</label>
@@ -309,8 +327,10 @@ button {
     </div>
     
     <div class="main-section">
-      <div class="collapsible-section-title" data-target="bg-style-content">背景 <span class="collapsible-arrow">▶</span></div>
-      <div id="bg-style-content" class="collapsible-content">
+      <div class="collapsible-section-title" data-target="bg-style-content">
+        背景 <span class="collapsible-arrow collapsed">▶</span>
+      </div>
+      <div id="bg-style-content" class="collapsible-content collapsed">
         <div class="section">
           <label>底色</label><input type="color" id="bgColor" value="#ffffff">
           <label>透明度</label><input type="range" id="bgOpacity" min="0" max="100" value="100">
@@ -340,6 +360,10 @@ const downloadBtn = document.getElementById('downloadBtn');
 const yearInput = document.getElementById('year');
 const monthInput = document.getElementById('month');
 const monthTextInput = document.getElementById('monthText');
+yearInput.value = new Date().getFullYear();
+monthInput.value = new Date().getMonth() + 1;
+const monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+monthTextInput.value = monthNames[new Date().getMonth()];
 
 const monthFontSizeInput = document.getElementById('monthFontSize');
 const monthTextColorInput = document.getElementById('monthTextColor');
@@ -386,10 +410,9 @@ document.querySelectorAll('.collapsible-section-title').forEach(t=>{
 });
 
 let currentImage=null;
-let dragCalendar=false,dragMonth=false;
-let calX=50,calY=300;
-let monthX=50,monthY=150;
-let ox=0,oy=0;
+let dragTarget = null;
+let dragStart = {x:0,y:0};
+let elementPos = {calX:50,calY:300,monthX:50,monthY:150};
 let calW=0,calH=0;
 
 const weekTemplates = {
@@ -414,9 +437,6 @@ imageInput.onchange=e=>{
     currentImage=img;
     canvas.width=img.width;
     canvas.height=img.height;
-    const s=Math.max(img.width,img.height)/1500;
-    monthFontSizeInput.value=Math.min(500,Math.max(40,120*s));
-    dateFontSizeInput.value=Math.min(200,Math.max(20,60*s));
     redraw();
   };
   img.src=URL.createObjectURL(f);
@@ -429,40 +449,84 @@ function getPos(e){
   return {x,y};
 }
 
-function startDrag(e){
-  e.preventDefault();
-  if(!currentImage)return;
-  const {x,y}=getPos(e);
-  const inCal=x>=calX-20&&x<=calX+calW+20&&y>=calY-20&&y<=calY+calH+20;
-  if(inCal){dragCalendar=true;dragMonth=false;ox=x-calX;oy=y-calY;return;}
-  
+function isPointInCalendar(x,y){
+  return x>=elementPos.calX-30 && x<=elementPos.calX+calW+30 &&
+         y>=elementPos.calY-30 && y<=elementPos.calY+calH+30;
+}
+
+function isPointInMonth(x,y){
   const mfs=monthItalicInput.checked?'italic':'normal';
   const mfw=monthBoldInput.checked?'bold':'normal';
   const msz=+monthFontSizeInput.value;
   ctx.font=`${mfs} ${mfw} ${msz}px ${monthFontFamilyInput.value}`;
   const txt=monthTextInput.value;
   const dir=monthDirectionInput.value;
-  let inMonth=false;
   
   if(dir==='horizontal'){
     const w=ctx.measureText(txt).width;
-    inMonth=x>=monthX-20&&x<=monthX+w+20&&y>=monthY-msz-20&&y<=monthY+20;
+    return x>=elementPos.monthX-30 && x<=elementPos.monthX+w+30 &&
+           y>=elementPos.monthY-msz-30 && y<=elementPos.monthY+30;
   }else{
     const h=msz+ +monthLetterSpacingInput.value;
-    inMonth=x>=monthX-20&&x<=monthX+100+20&&y>=monthY-20&&y<=monthY+txt.length*h+20;
+    return x>=elementPos.monthX-30 && x<=elementPos.monthX+150+30 &&
+           y>=elementPos.monthY-30 && y<=elementPos.monthY+txt.length*h+30;
   }
-  if(inMonth){dragMonth=true;dragCalendar=false;ox=x-monthX;oy=y-monthY;}
+}
+
+canvas.addEventListener('mousemove',(e)=>{
+  if(!currentImage || dragTarget)return;
+  const {x,y}=getPos(e);
+  if(isPointInCalendar(x,y) || isPointInMonth(x,y)){
+    canvas.classList.add('draggable');
+  }else{
+    canvas.classList.remove('draggable');
+  }
+});
+
+function startDrag(e){
+  e.preventDefault();
+  if(!currentImage)return;
+  const {x,y}=getPos(e);
+  
+  if(isPointInCalendar(x,y)){
+    dragTarget='calendar';
+  }else if(isPointInMonth(x,y)){
+    dragTarget='month';
+  }else{
+    dragTarget=null;
+    return;
+  }
+  
+  dragStart.x=x;
+  dragStart.y=y;
+  canvas.classList.add('dragging');
 }
 
 function dragMove(e){
   e.preventDefault();
-  if(!currentImage)return;
+  if(!currentImage || !dragTarget)return;
   const {x,y}=getPos(e);
-  if(dragCalendar){calX=x-ox;calY=y-oy;redraw();}
-  if(dragMonth){monthX=x-ox;monthY=y-oy;redraw();}
+  const dx=x-dragStart.x;
+  const dy=y-dragStart.y;
+  
+  if(dragTarget==='calendar'){
+    elementPos.calX+=dx;
+    elementPos.calY+=dy;
+  }else if(dragTarget==='month'){
+    elementPos.monthX+=dx;
+    elementPos.monthY+=dy;
+  }
+  
+  dragStart.x=x;
+  dragStart.y=y;
+  redraw();
 }
 
-function stopDrag(){dragCalendar=false;dragMonth=false;}
+function stopDrag(){
+  dragTarget=null;
+  canvas.classList.remove('draggable');
+  canvas.classList.remove('dragging');
+}
 
 canvas.addEventListener('mousedown',startDrag);
 canvas.addEventListener('touchstart',startDrag);
@@ -471,6 +535,7 @@ canvas.addEventListener('touchmove',dragMove);
 canvas.addEventListener('mouseup',stopDrag);
 canvas.addEventListener('mouseleave',stopDrag);
 canvas.addEventListener('touchend',stopDrag);
+canvas.addEventListener('touchcancel',stopDrag);
 
 function redraw(){
   if(!currentImage)return;
@@ -506,22 +571,22 @@ function draw(){
   calH=pad*2+dSz+lh+rows*(dSz+lh);
 
   ctx.save();ctx.globalAlpha=bgO;
-  ctx.fillStyle=bgC;ctx.fillRect(calX,calY,calW,calH);ctx.restore();
+  ctx.fillStyle=bgC;ctx.fillRect(elementPos.calX,elementPos.calY,calW,calH);ctx.restore();
   
   ctx.font=`${mSty} ${mW} ${mSz}px ${mF}`;
   ctx.fillStyle=mC;
   if(mDir==='vertical'){
-    let y=monthY+mSz;
-    for(const c of monthTxt){ctx.fillText(c,monthX,y);y+=mSz+mLttr;}
+    let y=elementPos.monthY+mSz;
+    for(const c of monthTxt){ctx.fillText(c,elementPos.monthX,y);y+=mSz+mLttr;}
   }else{
-    let x=monthX;
-    for(const c of monthTxt){ctx.fillText(c,x,monthY+mSz);x+=ctx.measureText(c).width+mLttr;}
+    let x=elementPos.monthX;
+    for(const c of monthTxt){ctx.fillText(c,x,elementPos.monthY+mSz);x+=ctx.measureText(c).width+mLttr;}
   }
   
-  let cy=calY+pad;
+  let cy=elementPos.calY+pad;
   ctx.font=`${dSty} ${dW} ${dSz*0.7}px ${dF}`;
   ctx.fillStyle=dC;
-  let wx=calX+pad;
+  let wx=elementPos.calX+pad;
   for(const w of week){ctx.fillText(w,wx,cy+dSz*0.7);wx+=cw;}
   cy+=dSz+lh;
   
@@ -529,7 +594,7 @@ function draw(){
   ctx.fillStyle=dC;
   let day=1;
   for(let r=0;r<rows;r++){
-    let dx=calX+pad;
+    let dx=elementPos.calX+pad;
     for(let c=0;c<7;c++){
       if(r===0&&c<first){dx+=cw;continue;}
       if(day>days)break;
