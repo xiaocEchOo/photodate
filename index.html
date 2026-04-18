@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Freckle+Face&Tiny5&Alex+Brush&Caveat:wght@400;700&Lobster&Montserrat:wght@400;700;900&Noto+Sans+SC:wght@400;700&Oswald:wght@400;700&Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-<title>Photodate</title>
+<link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Freckle+Face&family=Noto+Sans+SC:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Pirata+One&family=Tiny5&family=ZCOOL+KuaiLe&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+<title>Photodate - 图片日历生成器</title>
 <style>
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Montserrat, system-ui, sans-serif;
+  font-family: "Noto Sans SC", sans-serif;
 }
 html, body {
   height: 100%;
@@ -141,6 +141,10 @@ button {
   border-radius: 8px;
   font-size: 14px;
   font-weight: 700;
+  transition: background 0.2s ease;
+}
+button:hover {
+  background: #4338ca;
 }
 .preview {
   flex: 1;
@@ -178,7 +182,9 @@ button {
 }
 .number-input {
   width: 100%;
-  padding-right: 40px;
+  padding-right: 40px; /* 给按钮留出足够空间 */
+  height: 36px; /* 统一输入框高度 */
+  line-height: 36px; /* 文字垂直居中 */
 }
 .number-input::-webkit-outer-spin-button,
 .number-input::-webkit-inner-spin-button {
@@ -192,27 +198,58 @@ button {
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px; /* 增加按钮间距，避免重叠 */
 }
 .input-btn {
-  width: 20px;
-  height: 12px;
+  width: 22px; /* 加宽按钮 */
+  height: 14px; /* 加高按钮 */
   border: none;
   background: transparent;
+  cursor: pointer;
+  position: relative; /* 相对定位，让箭头居中 */
 }
+/* 修复上箭头样式 - 避免重叠 */
 .input-btn.up::after {
   content: '';
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-bottom: 5px solid #a0aec0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -70%); /* 精准居中 */
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 6px solid #a0aec0;
 }
+/* 修复下箭头样式 - 避免重叠 */
 .input-btn.down::after {
   content: '';
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 5px solid #a0aec0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -30%); /* 精准居中 */
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #a0aec0;
+}
+.input-btn.up:hover::after {
+  border-bottom-color: #4f46e5;
+}
+.input-btn.down:hover::after {
+  border-top-color: #4f46e5;
 }
 
+/* 你选择的英文字体 */
+.pirata-one-regular { font-family: "Pirata One", system-ui; }
+.freckle-face-regular { font-family: "Freckle Face", system-ui; }
+.alex-brush-regular { font-family: "Alex Brush", cursive; }
+.tiny5-regular { font-family: "Tiny5", sans-serif; }
+
+/* 新增标准中文字体 */
+.noto-sans-sc { font-family: "Noto Sans SC", sans-serif; }
+.noto-serif-sc { font-family: "Noto Serif SC", serif; }
+.zcool-kuaile { font-family: "ZCOOL KuaiLe", sans-serif; }
+.zcool-qingke-huangyou { font-family: "ZCOOL QingKe HuangYou", sans-serif; }
+
+/* 响应式 */
 @media (min-width: 768px) {
   .app {
     flex-direction: row;
@@ -226,6 +263,19 @@ button {
   }
   .preview {
     padding: 24px;
+  }
+}
+@media (max-width: 767px) {
+  .sidebar {
+    max-height: 45vh;
+    padding: 16px;
+  }
+  .collapsible-section-title {
+    font-size: 14px;
+  }
+  button {
+    padding: 8px;
+    font-size: 13px;
   }
 }
 </style>
@@ -272,15 +322,14 @@ button {
           </select>
           <label>字体</label>
           <select id="monthFontFamily">
-            <option value="Montserrat, sans-serif">极简（中英）</option>
-            <option value="Oswald, sans-serif">摩登（中英）</option>
-            <option value="Playfair Display, serif">优雅（中英）</option>
-            <option value="Lobster, cursive">活泼（中英）</option>
-            <option value="Caveat, cursive">手写（中英）</option>
-            <option value="Pirata One, system-ui">复古（仅英文）</option>
-            <option value="Freckle Face, system-ui">可爱（仅英文）</option>
-            <option value="Tiny5, sans-serif">像素（仅英文）</option>
-            <option value="Alex Brush, cursive">花体（仅英文）</option>
+            <option value="Noto Sans SC, sans-serif" selected>极简</option>
+            <option value="Noto Serif SC, serif">优雅</option>
+            <option value="ZCOOL QingKe HuangYou, sans-serif">可爱</option>
+            <option value="ZCOOL KuaiLe, sans-serif">活泼</option>
+            <option value="Pirata One, system-ui">复古</option>
+            <option value="Freckle Face, system-ui">手写</option>
+            <option value="Alex Brush, cursive">花体</option>
+            <option value="Tiny5, sans-serif">像素</option>
           </select>
           <div class="sub-section">
             <label><input type="checkbox" id="monthBold" checked> 加粗</label>
@@ -297,20 +346,19 @@ button {
       <div id="date-style-content" class="collapsible-content collapsed">
         <div class="section">
           <label>大小</label><input type="range" id="dateFontSize" min="20" max="200" value="60">
-          <label>列间距</label><input type="range" id="letterSpacing" min="0" max="120" value="10">
+          <label>列间距</label><input type="range" id="letterSpacing" min="-50" max="120" value="0">
           <label>行间距</label><input type="range" id="lineHeight" min="15" max="240" value="90">
           <label>颜色</label><input type="color" id="dateTextColor" value="#000000">
           <label>字体</label>
           <select id="dateFontFamily">
-            <option value="Montserrat, sans-serif">极简（中英）</option>
-            <option value="Oswald, sans-serif">摩登（中英）</option>
-            <option value="Playfair Display, serif">优雅（中英）</option>
-            <option value="Lobster, cursive">活泼（中英）</option>
-            <option value="Caveat, cursive">手写（中英）</option>
-            <option value="Pirata One, system-ui">复古（仅英文）</option>
-            <option value="Freckle Face, system-ui">可爱（仅英文）</option>
-            <option value="Tiny5, sans-serif">像素（仅英文）</option>
-            <option value="Alex Brush, cursive">花体（仅英文）</option>
+            <option value="Noto Sans SC, sans-serif" selected>极简</option>
+            <option value="Noto Serif SC, serif">优雅</option>
+            <option value="ZCOOL QingKe HuangYou, sans-serif">可爱</option>
+            <option value="ZCOOL KuaiLe, sans-serif">活泼</option>
+            <option value="Pirata One, system-ui">复古</option>
+            <option value="Freckle Face, system-ui">手写</option>
+            <option value="Alex Brush, cursive">花体</option>
+            <option value="Tiny5, sans-serif">像素</option>
           </select>
           <div class="sub-section">
             <label><input type="checkbox" id="dateBold" checked> 加粗</label>
@@ -330,7 +378,7 @@ button {
       <div class="collapsible-section-title" data-target="bg-style-content">
         背景 <span class="collapsible-arrow collapsed">▶</span>
       </div>
-      <div id="bg-style-content" class="collapsible-content collapsed">
+      <div id="bgStyle-content" class="collapsible-content collapsed">
         <div class="section">
           <label>底色</label><input type="color" id="bgColor" value="#ffffff">
           <label>透明度</label><input type="range" id="bgOpacity" min="0" max="100" value="100">
@@ -390,228 +438,284 @@ const yearDown = document.getElementById('yearDown');
 const monthUp = document.getElementById('monthUp');
 const monthDown = document.getElementById('monthDown');
 
-yearUp.addEventListener('click', ()=>{let v=+yearInput.value;if(v<2100)yearInput.value=v+1;validateYear();redraw();});
-yearDown.addEventListener('click', ()=>{let v=+yearInput.value;if(v>1900)yearInput.value=v-1;validateYear();redraw();});
-monthUp.addEventListener('click', ()=>{let v=+monthInput.value;if(v<12)monthInput.value=v+1;validateMonth();redraw();});
-monthDown.addEventListener('click', ()=>{let v=+monthInput.value;if(v>1)monthInput.value=v-1;validateMonth();redraw();});
+yearUp.addEventListener('click', ()=>{
+  let v = +yearInput.value;
+  if(v < 2100) yearInput.value = v + 1;
+  validateYear(); redraw();
+});
+yearDown.addEventListener('click', ()=>{
+  let v = +yearInput.value;
+  if(v > 1900) yearInput.value = v - 1;
+  validateYear(); redraw();
+});
+monthUp.addEventListener('click', ()=>{
+  let v = +monthInput.value;
+  if(v < 12) monthInput.value = v + 1;
+  validateMonth(); redraw();
+});
+monthDown.addEventListener('click', ()=>{
+  let v = +monthInput.value;
+  if(v > 1) monthInput.value = v - 1;
+  validateMonth(); redraw();
+});
 
-function validateYear(){let v=+yearInput.value;if(isNaN(v))v=2026;v=Math.max(1900,Math.min(2100,v));yearInput.value=v;}
-function validateMonth(){let v=+monthInput.value;if(isNaN(v))v=4;v=Math.max(1,Math.min(12,v));monthInput.value=v;}
-yearInput.addEventListener('blur',validateYear);
-monthInput.addEventListener('blur',validateMonth);
+function validateYear(){
+  let v = +yearInput.value;
+  if(isNaN(v)) v = new Date().getFullYear();
+  v = Math.max(1900, Math.min(2100, v));
+  yearInput.value = v;
+}
+function validateMonth(){
+  let v = +monthInput.value;
+  if(isNaN(v)) v = new Date().getMonth() + 1;
+  v = Math.max(1, Math.min(12, v));
+  monthInput.value = v;
+  monthTextInput.value = monthNames[v - 1];
+}
+yearInput.addEventListener('blur', validateYear);
+monthInput.addEventListener('blur', validateMonth);
 
-document.querySelectorAll('.collapsible-section-title').forEach(t=>{
-  t.addEventListener('click',()=>{
-    const c=document.getElementById(t.dataset.target);
-    const a=t.querySelector('.collapsible-arrow');
-    c.classList.toggle('collapsed');
-    a.classList.toggle('collapsed');
+document.querySelectorAll('.collapsible-section-title').forEach(title => {
+  title.addEventListener('click', () => {
+    const content = document.getElementById(title.dataset.target);
+    const arrow = title.querySelector('.collapsible-arrow');
+    content.classList.toggle('collapsed');
+    arrow.classList.toggle('collapsed');
   });
 });
 
-let currentImage=null;
+let currentImage = null;
 let dragTarget = null;
-let dragStart = {x:0,y:0};
-let elementPos = {calX:50,calY:300,monthX:50,monthY:150};
-let calW=0,calH=0;
+let dragStart = {x:0, y:0};
+let elementPos = {calX:50, calY:300, monthX:50, monthY:150};
+let calW = 0, calH = 0;
 
 const weekTemplates = {
-  cn:['一','二','三','四','五','六','日'],
-  en_full:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
-  en_short:['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+  cn: ['一','二','三','四','五','六','日'],
+  en_full: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+  en_short: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 };
 
-[yearInput,monthInput,monthTextInput,monthFontSizeInput,monthTextColorInput,monthLetterSpacingInput,
-monthDirectionInput,monthFontFamilyInput,monthBoldInput,monthItalicInput,dateFontSizeInput,
-dateTextColorInput,dateFontFamilyInput,dateBoldInput,dateItalicInput,weekStyleInput,
-letterSpacingInput,lineHeightInput,bgColorInput,bgOpacityInput].forEach(i=>{
-  i.addEventListener('input',redraw);
-  i.addEventListener('change',redraw);
+[
+  yearInput, monthInput, monthTextInput, monthFontSizeInput,
+  monthTextColorInput, monthLetterSpacingInput, monthDirectionInput,
+  monthFontFamilyInput, monthBoldInput, monthItalicInput, dateFontSizeInput,
+  dateTextColorInput, dateFontFamilyInput, dateBoldInput, dateItalicInput,
+  weekStyleInput, letterSpacingInput, lineHeightInput, bgColorInput, bgOpacityInput
+].forEach(input => {
+  input.addEventListener('input', redraw);
+  input.addEventListener('change', redraw);
 });
 
-uploadBtn.onclick=()=>imageInput.click();
-imageInput.onchange=e=>{
-  const f=e.target.files[0];if(!f)return;
-  const img=new Image();
-  img.onload=()=>{
-    currentImage=img;
-    canvas.width=img.width;
-    canvas.height=img.height;
+uploadBtn.onclick = () => imageInput.click();
+imageInput.onchange = (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  const img = new Image();
+  img.onload = () => {
+    currentImage = img;
+    canvas.width = img.width;
+    canvas.height = img.height;
     redraw();
   };
-  img.src=URL.createObjectURL(f);
+  img.crossOrigin = 'anonymous';
+  img.src = URL.createObjectURL(file);
 };
 
-function getPos(e){
-  const r=canvas.getBoundingClientRect();
-  const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-  const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-  return {x,y};
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  return {x, y};
 }
 
-function isPointInCalendar(x,y){
-  return x>=elementPos.calX-30 && x<=elementPos.calX+calW+30 &&
-         y>=elementPos.calY-30 && y<=elementPos.calY+calH+30;
+function isPointInCalendar(x, y) {
+  return x >= elementPos.calX - 30 && x <= elementPos.calX + calW + 30 &&
+         y >= elementPos.calY - 30 && y <= elementPos.calY + calH + 30;
 }
 
-function isPointInMonth(x,y){
-  const mfs=monthItalicInput.checked?'italic':'normal';
-  const mfw=monthBoldInput.checked?'bold':'normal';
-  const msz=+monthFontSizeInput.value;
-  ctx.font=`${mfs} ${mfw} ${msz}px ${monthFontFamilyInput.value}`;
-  const txt=monthTextInput.value;
-  const dir=monthDirectionInput.value;
+function isPointInMonth(x, y) {
+  const mItalic = monthItalicInput.checked ? 'italic' : 'normal';
+  const mBold = monthBoldInput.checked ? 'bold' : 'normal';
+  const mSize = +monthFontSizeInput.value;
+  ctx.font = `${mItalic} ${mBold} ${mSize}px ${monthFontFamilyInput.value}`;
+  const text = monthTextInput.value;
+  const direction = monthDirectionInput.value;
   
-  if(dir==='horizontal'){
-    const w=ctx.measureText(txt).width;
-    return x>=elementPos.monthX-30 && x<=elementPos.monthX+w+30 &&
-           y>=elementPos.monthY-msz-30 && y<=elementPos.monthY+30;
-  }else{
-    const h=msz+ +monthLetterSpacingInput.value;
-    return x>=elementPos.monthX-30 && x<=elementPos.monthX+150+30 &&
-           y>=elementPos.monthY-30 && y<=elementPos.monthY+txt.length*h+30;
+  if(direction === 'horizontal') {
+    const width = ctx.measureText(text).width;
+    return x >= elementPos.monthX - 30 && x <= elementPos.monthX + width + 30 &&
+           y >= elementPos.monthY - mSize - 30 && y <= elementPos.monthY + 30;
+  } else {
+    const height = mSize + +monthLetterSpacingInput.value;
+    return x >= elementPos.monthX - 30 && x <= elementPos.monthX + 150 + 30 &&
+           y >= elementPos.monthY - 30 && y <= elementPos.monthY + text.length * height + 30;
   }
 }
 
-canvas.addEventListener('mousemove',(e)=>{
-  if(!currentImage || dragTarget)return;
-  const {x,y}=getPos(e);
-  if(isPointInCalendar(x,y) || isPointInMonth(x,y)){
+canvas.addEventListener('mousemove', (e) => {
+  if(!currentImage || dragTarget) return;
+  const {x, y} = getPos(e);
+  if(isPointInCalendar(x, y) || isPointInMonth(x, y)) {
     canvas.classList.add('draggable');
-  }else{
+  } else {
     canvas.classList.remove('draggable');
   }
 });
 
-function startDrag(e){
+function startDrag(e) {
   e.preventDefault();
-  if(!currentImage)return;
-  const {x,y}=getPos(e);
+  if(!currentImage) return;
+  const {x, y} = getPos(e);
   
-  if(isPointInCalendar(x,y)){
-    dragTarget='calendar';
-  }else if(isPointInMonth(x,y)){
-    dragTarget='month';
-  }else{
-    dragTarget=null;
-    return;
+  if(isPointInCalendar(x, y)) {
+    dragTarget = 'calendar';
+  } else if(isPointInMonth(x, y)) {
+    dragTarget = 'month';
+  } else {
+    dragTarget = null; return;
   }
-  
-  dragStart.x=x;
-  dragStart.y=y;
+  dragStart.x = x; dragStart.y = y;
   canvas.classList.add('dragging');
 }
 
-function dragMove(e){
+function dragMove(e) {
   e.preventDefault();
-  if(!currentImage || !dragTarget)return;
-  const {x,y}=getPos(e);
-  const dx=x-dragStart.x;
-  const dy=y-dragStart.y;
+  if(!currentImage || !dragTarget) return;
+  const {x, y} = getPos(e);
+  const dx = x - dragStart.x;
+  const dy = y - dragStart.y;
   
-  if(dragTarget==='calendar'){
-    elementPos.calX+=dx;
-    elementPos.calY+=dy;
-  }else if(dragTarget==='month'){
-    elementPos.monthX+=dx;
-    elementPos.monthY+=dy;
+  if(dragTarget === 'calendar') {
+    elementPos.calX += dx; elementPos.calY += dy;
+  } else if(dragTarget === 'month') {
+    elementPos.monthX += dx; elementPos.monthY += dy;
   }
-  
-  dragStart.x=x;
-  dragStart.y=y;
+  dragStart.x = x; dragStart.y = y;
   redraw();
 }
 
-function stopDrag(){
-  dragTarget=null;
+function stopDrag() {
+  dragTarget = null;
   canvas.classList.remove('draggable');
   canvas.classList.remove('dragging');
 }
 
-canvas.addEventListener('mousedown',startDrag);
-canvas.addEventListener('touchstart',startDrag);
-canvas.addEventListener('mousemove',dragMove);
-canvas.addEventListener('touchmove',dragMove);
-canvas.addEventListener('mouseup',stopDrag);
-canvas.addEventListener('mouseleave',stopDrag);
-canvas.addEventListener('touchend',stopDrag);
-canvas.addEventListener('touchcancel',stopDrag);
+canvas.addEventListener('mousedown', startDrag);
+canvas.addEventListener('touchstart', startDrag);
+canvas.addEventListener('mousemove', dragMove);
+canvas.addEventListener('touchmove', dragMove);
+canvas.addEventListener('mouseup', stopDrag);
+canvas.addEventListener('mouseleave', stopDrag);
+canvas.addEventListener('touchend', stopDrag);
+canvas.addEventListener('touchcancel', stopDrag);
 
-function redraw(){
-  if(!currentImage)return;
+function redraw() {
+  if(!currentImage) return;
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.drawImage(currentImage,0,0);
-  draw();
+  drawCalendar();
 }
 
-function draw(){
-  const Y=+yearInput.value,M=+monthInput.value;
-  const monthTxt=monthTextInput.value;
-  const bgC=bgColorInput.value,bgO=+bgOpacityInput.value/100;
-  const mSz=+monthFontSizeInput.value,mC=monthTextColorInput.value;
-  const mF=monthFontFamilyInput.value,mSty=monthItalicInput.checked?'italic':'normal';
-  const mW=monthBoldInput.checked?'bold':'normal';
-  const mLttr=+monthLetterSpacingInput.value,mDir=monthDirectionInput.value;
-  const dSz=+dateFontSizeInput.value,dC=dateTextColorInput.value;
-  const dF=dateFontFamilyInput.value,dSty=dateItalicInput.checked?'italic':'normal';
-  const dW=dateBoldInput.checked?'bold':'normal';
-  const sp=+letterSpacingInput.value,lh=+lineHeightInput.value;
-  const week=weekTemplates[weekStyleInput.value]||weekTemplates.cn;
+function drawCalendar() {
+  const year = +yearInput.value;
+  const month = +monthInput.value;
+  const monthText = monthTextInput.value;
+  const bgColor = bgColorInput.value;
+  const bgOpacity = +bgOpacityInput.value / 100;
+  
+  const monthFontSize = +monthFontSizeInput.value;
+  const monthColor = monthTextColorInput.value;
+  const monthFont = monthFontFamilyInput.value;
+  const monthItalic = monthItalicInput.checked ? 'italic' : 'normal';
+  const monthBold = monthBoldInput.checked ? 'bold' : 'normal';
+  const monthLetterSpacing = +monthLetterSpacingInput.value;
+  const monthDirection = monthDirectionInput.value;
+  
+  const dateFontSize = +dateFontSizeInput.value;
+  const dateColor = dateTextColorInput.value;
+  const dateFont = dateFontFamilyInput.value;
+  const dateItalic = dateItalicInput.checked ? 'italic' : 'normal';
+  const dateBold = dateBoldInput.checked ? 'bold' : 'normal';
+  const colSpacing = +letterSpacingInput.value;
+  const rowSpacing = +lineHeightInput.value;
+  const weekType = weekTemplates[weekStyleInput.value] || weekTemplates.cn;
 
-  const first=(new Date(Y,M-1,1).getDay()||7)-1;
-  const days=new Date(Y,M,0).getDate();
-  const pad=20;
+  const firstDay = (new Date(year, month-1, 1).getDay() ||7)-1;
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const padding = 20;
   
-  ctx.font=`${dSty} ${dW} ${dSz}px ${dF}`;
-  let mw=0;week.forEach(d=>mw=Math.max(mw,ctx.measureText(d).width));
-  for(let i=1;i<=31;i++)mw=Math.max(mw,ctx.measureText(i+'').width);
-  const cw=mw+20+sp;
-  const rows=Math.ceil((first+days)/7);
-  calW=cw*7+pad*2;
-  calH=pad*2+dSz+lh+rows*(dSz+lh);
+  ctx.font = `${dateItalic} ${dateBold} ${dateFontSize}px ${dateFont}`;
+  let maxCellWidth = 0;
+  weekType.forEach(day => maxCellWidth = Math.max(maxCellWidth, ctx.measureText(day).width));
+  for(let i=1;i<=31;i++) maxCellWidth = Math.max(maxCellWidth, ctx.measureText(i+'').width);
+  
+  const basePad = weekStyleInput.value === 'en_full' ? 2 : 5;
+  const cellWidth = maxCellWidth + basePad + colSpacing;
+  const rowCount = Math.ceil((firstDay + daysInMonth)/7);
+  
+  calW = cellWidth*7 + padding*2;
+  calH = padding*2 + dateFontSize*0.7 + rowSpacing + rowCount*(dateFontSize+rowSpacing);
 
-  ctx.save();ctx.globalAlpha=bgO;
-  ctx.fillStyle=bgC;ctx.fillRect(elementPos.calX,elementPos.calY,calW,calH);ctx.restore();
+  ctx.save();
+  ctx.globalAlpha = bgOpacity;
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(elementPos.calX, elementPos.calY, calW, calH);
+  ctx.restore();
   
-  ctx.font=`${mSty} ${mW} ${mSz}px ${mF}`;
-  ctx.fillStyle=mC;
-  if(mDir==='vertical'){
-    let y=elementPos.monthY+mSz;
-    for(const c of monthTxt){ctx.fillText(c,elementPos.monthX,y);y+=mSz+mLttr;}
-  }else{
-    let x=elementPos.monthX;
-    for(const c of monthTxt){ctx.fillText(c,x,elementPos.monthY+mSz);x+=ctx.measureText(c).width+mLttr;}
-  }
-  
-  let cy=elementPos.calY+pad;
-  ctx.font=`${dSty} ${dW} ${dSz*0.7}px ${dF}`;
-  ctx.fillStyle=dC;
-  let wx=elementPos.calX+pad;
-  for(const w of week){ctx.fillText(w,wx,cy+dSz*0.7);wx+=cw;}
-  cy+=dSz+lh;
-  
-  ctx.font=`${dSty} ${dW} ${dSz}px ${dF}`;
-  ctx.fillStyle=dC;
-  let day=1;
-  for(let r=0;r<rows;r++){
-    let dx=elementPos.calX+pad;
-    for(let c=0;c<7;c++){
-      if(r===0&&c<first){dx+=cw;continue;}
-      if(day>days)break;
-      ctx.fillText(day+'',dx,cy+dSz);
-      dx+=cw;day++;
+  ctx.font = `${monthItalic} ${monthBold} ${monthFontSize}px ${monthFont}`;
+  ctx.fillStyle = monthColor;
+  if(monthDirection === 'vertical') {
+    let y = elementPos.monthY + monthFontSize;
+    for(const char of monthText) {
+      ctx.fillText(char, elementPos.monthX, y);
+      y += monthFontSize + monthLetterSpacing;
     }
-    cy+=dSz+lh;
+  } else {
+    let x = elementPos.monthX;
+    for(const char of monthText) {
+      ctx.fillText(char, x, elementPos.monthY + monthFontSize);
+      x += ctx.measureText(char).width + monthLetterSpacing;
+    }
+  }
+  
+  let currentY = elementPos.calY + padding;
+  ctx.font = `${dateItalic} ${dateBold} ${dateFontSize*0.7}px ${dateFont}`;
+  ctx.fillStyle = dateColor;
+  let weekX = elementPos.calX + padding;
+  for(const weekDay of weekType) {
+    const tw = ctx.measureText(weekDay).width;
+    ctx.fillText(weekDay, weekX + (cellWidth-tw)/2, currentY + dateFontSize*0.7);
+    weekX += cellWidth;
+  }
+  currentY += dateFontSize*0.7 + rowSpacing;
+  
+  ctx.font = `${dateItalic} ${dateBold} ${dateFontSize}px ${dateFont}`;
+  ctx.fillStyle = dateColor;
+  let currentDay = 1;
+  for(let row=0;row<rowCount;row++) {
+    let dateX = elementPos.calX + padding;
+    for(let col=0;col<7;col++) {
+      if(row===0 && col<firstDay) {dateX+=cellWidth; continue;}
+      if(currentDay>daysInMonth) break;
+      const tw = ctx.measureText(currentDay+'').width;
+      ctx.fillText(currentDay+'', dateX + (cellWidth-tw)/2, currentY+dateFontSize);
+      dateX += cellWidth; currentDay++;
+    }
+    currentY += dateFontSize + rowSpacing;
   }
 }
 
-downloadBtn.onclick=()=>{
-  if(!currentImage){alert('请先上传图片！');return;}
-  const a=document.createElement('a');
-  a.download=`Photodate_${yearInput.value}${monthInput.value}.png`;
-  a.href=canvas.toDataURL('image/png');
-  a.click();
+downloadBtn.onclick = () => {
+  if(!currentImage) { alert('请先上传背景图片！'); return; }
+  const link = document.createElement('a');
+  link.download = `Photodate_${yearInput.value}${monthInput.value.toString().padStart(2,'0')}.png`;
+  link.href = canvas.toDataURL('image/png',1.0);
+  link.click();
+  URL.revokeObjectURL(link.href);
 };
+
+document.querySelector('.collapsible-section-title').click();
 </script>
 </body>
 </html>
