@@ -1,34 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Alex+Brush&family=Freckle+Face&family=Pirata+One&family=Tiny5&display=swap');
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: system-ui, -apple-system, sans-serif;
-}
-
-.pirata-one-regular {
-  font-family: "Pirata One", system-ui;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.freckle-face-regular {
-  font-family: "Freckle Face", system-ui;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.tiny5-regular {
-  font-family: "Tiny5", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.alex-brush-regular {
-  font-family: "Alex Brush", cursive;
-  font-weight: 400;
-  font-style: normal;
 }
 
 .app {
